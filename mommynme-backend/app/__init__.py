@@ -8,6 +8,7 @@ from .routes.product_routes import product_bp
 from .routes.cart_routes import cart_bp
 from .routes.orders_routes import orders_bp
 from .routes.contact_routes import contact_bp
+from .routes.featured_update_routes import featured_bp
 from config import Config
 
 def create_app():
@@ -22,6 +23,7 @@ def create_app():
     app.register_blueprint(cart_bp, url_prefix='/cart')
     app.register_blueprint(orders_bp, url_prefix='/orders')
     app.register_blueprint(contact_bp, url_prefix='/contact')
+    app.register_blueprint(featured_bp, url_prefix='/featured')
 
     # Add a root route for welcome message
     @app.route('/')

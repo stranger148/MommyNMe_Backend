@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.models import db, Order
+from sqlalchemy import func
 
 orders_bp = Blueprint('orders_bp', __name__)
 
@@ -69,6 +70,19 @@ def get_pending_orders_count():
 def get_shipped_orders_count():
     count = Order.query.filter_by(status='SHIPPED').count()
     return jsonify({'count': count})
+
+@orders_bp.route('/orders/by-date', methods=['GET'])
+def get_orders_by_date():
+    results = (
+        db.session.query(func.date(Order.created_at), func.count(Order.id))
+        .group_by(func.date(Order.created_at))
+        .order_by(func.date(Order.created_at).asc())
+        .all()
+    )
+    return jsonify([
+        {'date': str(date), 'count': count}
+        for date, count in results
+    ])
 
 @orders_bp.route('/<int:order_id>/status', methods=['PATCH'])
 def update_order_status(order_id):
