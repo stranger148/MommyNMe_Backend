@@ -78,3 +78,9 @@ def get_products():
             'category_id': p.category_id
         } for p in products
     ])
+
+@product_bp.route('/products/count', methods=['GET'])
+def get_product_count():
+    from app.models import Product
+    count = Product.query.count()
+    return jsonify({'count': count})

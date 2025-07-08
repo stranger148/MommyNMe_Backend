@@ -17,3 +17,8 @@ def get_categories():
     return jsonify([
         {'id': c.id, 'name': c.name, 'description': c.description} for c in categories
     ])
+
+@category_bp.route('/categories/count', methods=['GET'])
+def get_category_count():
+    count = Category.query.count()
+    return jsonify({'count': count})

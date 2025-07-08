@@ -60,6 +60,16 @@ def get_shipped_orders():
         for o in shipped_orders
     ])
 
+@orders_bp.route('/pending/count', methods=['GET'])
+def get_pending_orders_count():
+    count = Order.query.filter_by(status='PENDING').count()
+    return jsonify({'count': count})
+
+@orders_bp.route('/shipped/count', methods=['GET'])
+def get_shipped_orders_count():
+    count = Order.query.filter_by(status='SHIPPED').count()
+    return jsonify({'count': count})
+
 @orders_bp.route('/<int:order_id>/status', methods=['PATCH'])
 def update_order_status(order_id):
     data = request.get_json()
