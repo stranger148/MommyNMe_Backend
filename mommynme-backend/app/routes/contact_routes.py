@@ -14,4 +14,12 @@ def submit_contact():
     contact = Contact(name=name, email=email, message=message)
     db.session.add(contact)
     db.session.commit()
-    return jsonify({'message': 'Thank you for contacting us!'}), 201 
+    return jsonify({'message': 'Thank you for contacting us!'}), 201
+
+@contact_bp.route('/latest', methods=['GET'])
+def get_latest_reviews():
+    reviews = Contact.query.order_by(Contact.created_at.desc()).limit(3).all()
+    return jsonify([
+        {'name': r.name, 'message': r.message}
+        for r in reviews
+    ]) 
