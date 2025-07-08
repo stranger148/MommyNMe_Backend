@@ -5,6 +5,8 @@ from flask_cors import CORS
 from .models import db
 from .routes.admin_routes import admin_bp
 from .routes.user_routes import user_bp
+from .routes.category_routes import category_bp
+from .routes.product_routes import product_bp
 from config import Config
 
 def create_app():
@@ -17,6 +19,8 @@ def create_app():
     # Register blueprints
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(user_bp)
+    app.register_blueprint(category_bp, url_prefix='/category')
+    app.register_blueprint(product_bp, url_prefix='/product')
 
     # Add a root route for welcome message
     @app.route('/')
@@ -26,4 +30,4 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    return app 
+    return app
