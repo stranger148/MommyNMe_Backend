@@ -5,6 +5,7 @@ from flask_cors import CORS
 from .models import db
 from .routes.category_routes import category_bp
 from .routes.product_routes import product_bp
+from .routes.cart_routes import cart_bp
 from config import Config
 
 def create_app():
@@ -16,6 +17,7 @@ def create_app():
     # Register only necessary blueprints
     app.register_blueprint(category_bp, url_prefix='/category')
     app.register_blueprint(product_bp, url_prefix='/product')
+    app.register_blueprint(cart_bp, url_prefix='/cart')
 
     # Add a root route for welcome message
     @app.route('/')
