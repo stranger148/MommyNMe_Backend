@@ -57,3 +57,24 @@ def add_product():
     db.session.add(product)
     db.session.commit()
     return jsonify({'message': 'Product created', 'id': product.id, 'images': image_paths}), 201
+
+@product_bp.route('/products', methods=['GET'])
+def get_products():
+    category_id = request.args.get('category_id')
+    query = Product.query
+    if category_id:
+        query = query.filter_by(category_id=category_id)
+    products = query.all()
+    return jsonify([
+        {
+            'id': p.id,
+            'name': p.name,
+            'description': p.description,
+            'price': p.price,
+            'image1': p.image1,
+            'image2': p.image2,
+            'image3': p.image3,
+            'image4': p.image4,
+            'category_id': p.category_id
+        } for p in products
+    ])
