@@ -79,6 +79,24 @@ def get_products():
         } for p in products
     ])
 
+@product_bp.route('/products/latest', methods=['GET'])
+def get_latest_products():
+    from app.models import Product
+    products = Product.query.order_by(Product.id.desc()).limit(5).all()
+    return jsonify([
+        {
+            'id': p.id,
+            'name': p.name,
+            'description': p.description,
+            'price': p.price,
+            'image1': p.image1,
+            'image2': p.image2,
+            'image3': p.image3,
+            'image4': p.image4
+        }
+        for p in products
+    ])
+
 @product_bp.route('/products/count', methods=['GET'])
 def get_product_count():
     from app.models import Product
