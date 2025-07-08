@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSONB
 
 db = SQLAlchemy()
 
@@ -30,3 +31,15 @@ class Cart(db.Model):
     description = db.Column(db.Text)
     category_id = db.Column(db.Integer)
     quantity = db.Column(db.Integer, nullable=False, default=1)
+
+class Order(db.Model):
+    __tablename__ = 'orders'
+    id = db.Column(db.Integer, primary_key=True)
+    customer_name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    payment_mode = db.Column(db.String(50), nullable=False)
+    products = db.Column(JSONB, nullable=False)
+    status = db.Column(db.String(20), nullable=True, default='PENDING')
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
