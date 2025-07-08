@@ -11,30 +11,49 @@ def add_product():
     name = request.form.get('name')
     description = request.form.get('description')
     price = request.form.get('price')
-    delivery_time = request.form.get('delivery_time')
     category_id = request.form.get('category_id')
-    image = request.files.get('image')
-    image_url = None
-    if image:
-        filename = secure_filename(image.filename)
-        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
-        os.makedirs(upload_folder, exist_ok=True)
-        image_path = os.path.join(upload_folder, filename)
-        print('Saving image to:', image_path)
-        try:
+
+    # Check for required fields
+    if not name or not price or not category_id:
+        return jsonify({'error': 'Missing required fields: name, price, or category_id'}), 400
+
+    # Convert price and category_id to correct types
+    try:
+        price = float(price)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid price'}), 400
+    try:
+        category_id = int(category_id)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid category_id'}), 400
+
+    image_fields = ['image1', 'image2', 'image3', 'image4']
+    image_paths = []
+    upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+    os.makedirs(upload_folder, exist_ok=True)
+
+    for field in image_fields:
+        image = request.files.get(field)
+        if image and image.filename:
+            filename = secure_filename(image.filename)
+            image_path = os.path.join(upload_folder, filename)
             image.save(image_path)
-            print('Image saved successfully.')
-        except Exception as e:
-            print('Image save failed:', e)
-        image_url = f'/static/uploads/{filename}'
+            image_url = f'/static/uploads/{filename}'
+            image_paths.append(image_url)
+        else:
+            image_paths.append(None)
+
+    # Create product using only the fields defined in the Product model
     product = Product(
         name=name,
         description=description,
         price=price,
-        delivery_time=delivery_time,
-        image_url=image_url,
-        category_id=category_id
+        category_id=category_id,
+        image1=image_paths[0],
+        image2=image_paths[1],
+        image3=image_paths[2],
+        image4=image_paths[3]
     )
     db.session.add(product)
     db.session.commit()
-    return jsonify({'message': 'Product created', 'id': product.id, 'image_url': image_url}), 201
+    return jsonify({'message': 'Product created', 'id': product.id, 'images': image_paths}), 201
